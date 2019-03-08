@@ -82,7 +82,6 @@ namespace sereno
             virtual const Quaternionf& getRotate() const;
 
             /** \brief Get the origin position of this object
-             * \param useScale if set to true, the matrix position will be multiplied by the scale
              * \return the position origin of this object*/
             virtual glm::vec3 getPositionOrigin() const;
 
