@@ -13,10 +13,17 @@ namespace sereno
     struct Quaternion
     {
         public:
-            T w = T(1); /*!< W component (real part) */
-            T x = T(0); /*!< i part*/
-            T y = T(0); /*!< j part*/
-            T z = T(0); /*!< k part*/
+            union
+            {
+                struct
+                {
+                    T w = T(1); /*!< W component (real part) */
+                    T x = T(0); /*!< i part*/
+                    T y = T(0); /*!< j part*/
+                    T z = T(0); /*!< k part*/
+                };
+                T data[4];
+            };
 
             /* \brief Constructor putting this Quaternion into an Identity state */
             Quaternion()
@@ -87,6 +94,16 @@ namespace sereno
                 z   = axis->z * s;
             }
 
+            T& operator[](int i)
+            {
+                return data[i];
+            }
+
+            const T& operator[](int i) const
+            {
+                return data[i];
+            }
+
             /* \brief Convert a quaternion into a rotation matrix
              * \return the rotation matrix */
             glm::tmat4x4<T> getMatrix() const
@@ -105,11 +122,6 @@ namespace sereno
                                        xyT - wzT,       1-2*xx - 2*zz, yzT + wxT,     0,
                                        xzT + wyT,       yzT - wxT,     1-2*xx - 2*yy, 0,
                                        0,               0,             0,             1);
-
-//                return glm::tmat4x4<T>(1 - 2*yy - 2*zz, xyT - wzT,     xzT + wyT,     0,
-//                                       xyT + wzT,       1-2*xx - 2*zz, yzT - wxT,     0,
-//                                       xzT - wyT,       yzT + wxT,     1-2*xx - 2*yy, 0,
-//                                       0,               0,             0,             1);
             }
     };
 
