@@ -1,4 +1,9 @@
+#define GLM_ENABLE_EXPERIMENTAL
 #include "Transformable.h"
+#include <glm/gtx/string_cast.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
+
 
 namespace sereno
 {
@@ -298,5 +303,64 @@ namespace sereno
                                  v.z / ((ds.z != 0) ? ds.z : 1));
         setScale(s);
 
+    }
+
+    void lookAt(Transformable& out, const glm::vec3& tmp, const glm::vec3& pos, const glm::vec3& target, bool rh)
+    {
+        out.setPosition(pos);
+
+        glm::vec3 forward = glm::normalize(target-pos);
+        if(rh)
+            forward *= -1.0f;
+        glm::vec3 right   = glm::cross(glm::normalize(tmp), forward);
+        glm::vec3 up      = glm::cross(forward, right);
+
+        float qw, qx, qy, qz;
+
+        float m00 = right.x,   m01 = right.y,   m02 = right.z;
+        float m10 = up.x,      m11 = up.y,      m12 = up.z;
+        float m20 = forward.x, m21 = forward.y, m22 = forward.z;
+
+        float tr = m00 + m11 + m22;
+
+        if(tr > 0) 
+        { 
+            float s = sqrt(tr+1.0) * 2; // s=4*qw 
+            qw = 0.25 * s;
+            qx = (m21 - m12) / s;
+            qy = (m02 - m20) / s; 
+            qz = (m10 - m01) / s; 
+        }
+        else if((m00 > m11)&&(m00 > m22)) 
+        { 
+            float s = sqrt(1.0 + m00 - m11 - m22) * 2; // s=4*qx 
+            qw = (m21 - m12) / s;
+            qx = 0.25 * s;
+            qy = (m01 + m10) / s; 
+            qz = (m02 + m20) / s; 
+        }
+        else if (m11 > m22) 
+        { 
+            float s = sqrt(1.0 + m11 - m00 - m22) * 2; // s=4*qy
+            qw = (m02 - m20) / s;
+            qx = (m01 + m10) / s; 
+            qy = 0.25 * s;
+            qz = (m12 + m21) / s; 
+        }
+        else 
+        { 
+            float s = sqrt(1.0 + m22 - m00 - m11) * 2; // s=4*qz
+            qw = (m10 - m01) / s;
+            qx = (m02 + m20) / s;
+            qy = (m12 + m21) / s;
+            qz = 0.25 * s;
+        }
+
+        Quaternionf q(qx, qy, qz, qw);
+        q.normalize();
+        for(int i = 1; i < 4; i++)
+            q[i] *= -1;
+
+        out.setRotate(q);
     }
 }

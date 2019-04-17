@@ -179,6 +179,14 @@ namespace sereno
 
             PositionOrigin              m_defaultPosOrigin = NO_POSITION;   /*!< Variable telling if the position origin is user-defined or anchors into one of the 9 points (top, center, left) x (left, center, right) coordinates*/
     };
+
+    /* \brief  Function used principly by cameras to look at a particular object
+     * \param out The transform to modify
+     * \param up the upward vector
+     * \param pos the transformable's new position
+     * \param target the transformable's target position (where is it looking at?)
+     * \param rh should the result be right-handed (true) or left-handed (false) ?*/
+    void lookAt(Transformable& out, const glm::vec3& up, const glm::vec3& pos, const glm::vec3& target, bool rh);
 }
 
 #endif

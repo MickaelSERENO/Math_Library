@@ -104,6 +104,15 @@ namespace sereno
                 return data[i];
             }
 
+            void normalize() 
+            {
+                float mag = sqrt(x*x + y*y + z*z + w*w);
+                w /= mag;
+                x /= mag;
+                y /= mag;
+                z /= mag;
+            }
+
             /* \brief Convert a quaternion into a rotation matrix
              * \return the rotation matrix */
             glm::tmat4x4<T> getMatrix() const
