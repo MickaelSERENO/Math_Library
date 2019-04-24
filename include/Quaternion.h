@@ -74,10 +74,8 @@ namespace sereno
              * \parma q the Quaternion to copy */
             Quaternion& operator=(const Quaternion& q)
             {
-                w = q.w;
-                x = q.x;
-                y = q.y;
-                z = q.z;
+                for(int i = 0; i < 4; i++)
+                    data[i] = q.data[i];
 
                 return *this;
             }
@@ -113,6 +111,11 @@ namespace sereno
                 z /= mag;
             }
 
+            Quaternion<T> getInverse() const
+            {
+                return Quaternion<T>(-x, -y, -z, w);
+            }
+
             /* \brief Convert a quaternion into a rotation matrix
              * \return the rotation matrix */
             glm::tmat4x4<T> getMatrix() const
@@ -131,6 +134,93 @@ namespace sereno
                                        xyT - wzT,       1-2*xx - 2*zz, yzT + wxT,     0,
                                        xzT + wyT,       yzT - wxT,     1-2*xx - 2*yy, 0,
                                        0,               0,             0,             1);
+            }
+
+            /**
+             * \brief  Rotate a vector by this quaternion
+             * @tparam S
+             * \param vec the vector to rotate
+             * \return   the vector rotated
+             */
+            template <typename S>
+            glm::tvec3<S> rotateVector(const glm::tvec3<S>& vec) const
+            {
+                Quaternion<T> invQ  = getInverse();
+                Quaternion<T> qPure = Quaternion<T>(vec.x, vec.y, vec.z, 0);
+                Quaternion<T> res   = invQ * qPure * (*this);
+                return glm::tvec3<S>(res.x, res.y, res.z);
+            }
+
+            /* \brief  Create a quaternion from euler angles
+             * @tparam S
+             * \param v the radian euler angles
+             * \return   the quaternion created from euler angles */
+            template <typename S>
+            static Quaternion<T> fromEulerAngles(const glm::tvec3<S>& v)
+            {
+                double cy = cos(v.x * 0.5);
+                double sy = sin(v.x * 0.5);
+                double cr = cos(v.z * 0.5);
+                double sr = sin(v.z * 0.5);
+                double cp = cos(v.y * 0.5);
+                double sp = sin(v.y * 0.5);
+
+                Quaternion<T> q;
+
+                q.w = cy * cr * cp + sy * sr * sp;
+                q.x = cy * sr * cp - sy * cr * sp;
+                q.y = cy * cr * sp + sy * sr * cp;
+                q.z = sy * cr * cp - cy * sr * sp;
+
+                return q;
+            }
+
+            /* \brief  Get the euler angle of this quaternion where you apply first x then y and finally z
+             * \param rad do you want the result in radian?
+             *
+             * \return   the euler angles */
+            glm::tvec3<T> toEulerAngles(bool rad=true) const
+            {
+                glm::tvec3<T> res;
+                double test = x*y + z*w; //Use for the singularities
+                if(test > 0.5 - 1.e-7)
+                {
+                    res.y = 2*atan2(x, w);
+                    res.x = M_PI/2.0;
+                    res.z = 0;
+                }
+                else if(test < -0.5 + 1.e-7)
+                {
+                    res.y = -2*atan2(x, w);
+                    res.x = -M_PI/2.0;
+                    res.z = 0;
+                }
+                else
+                {
+                    double sqx = x * x;
+                    double sqy = y * y;
+                    double sqz = z * z;
+                    double h1  = 2*y*w - 2*x*z;
+                    double h2  = 1 - 2*sqy - 2*sqz;
+                    double b1  = 2*x*w-2*y*z;
+                    double b2  = 1 - 2*sqx - 2*sqz;
+
+                    res.z = atan2(b1, b2);
+                    res.y = atan2(h1, h2);
+                    res.x = asin(2*test);
+                }
+
+                //Change rad to degree if needed
+                if(!rad)
+                    for(int i = 0; i < 3; i++)
+                        res[i] *= 180.0f/M_PI;
+
+                return res;
+            }
+
+            T getMagnitude() const
+            {
+                return sqrt(x*x + y*y + z*z + w*w);
             }
     };
 
