@@ -1,0 +1,6 @@
+Base library for Mathematics operations
+
+Needed library:
+    -glm
+
+The install.sh is based on my computer but can be modify to install fastly the library
