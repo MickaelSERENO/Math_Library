@@ -167,8 +167,8 @@ namespace sereno
             Quaternionf                 m_rotate;                           /*!< The rotation quaternion. */
             glm::mat4                   m_rotateMtx;                        /*!< The resulting rotation matrix*/
             glm::vec3                   m_scale;                            /*!< The scaling factor*/
-            glm::vec3                   m_position;                         /*!< The translation*/
-            glm::vec3                   m_positionOrigin;                   /*!< The origin position*/
+            glm::vec3                   m_position       = glm::vec3(0,0,0);/*!< The translation*/
+            glm::vec3                   m_positionOrigin = glm::vec3(0,0,0);/*!< The origin position*/
             glm::mat4                   m_applyMatrix;                      /*!< The sum of parent matrices */
 
             Transformable*              m_applyTransformation;              /*!< The parent transformation */
