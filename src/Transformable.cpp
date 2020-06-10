@@ -17,6 +17,32 @@ namespace sereno
         setTransMatrix();
     }
 
+    Transformable::Transformable(const Transformable& cpy)
+    {
+        *this = cpy;
+    }
+
+    Transformable& Transformable::operator=(const Transformable& cpy)
+    {
+        if(this != &cpy)
+        {
+            m_transMatrix      = cpy.m_transMatrix;
+            m_rotate           = cpy.m_rotate;
+            m_rotateMtx        = cpy.m_rotateMtx;
+            m_scale            = cpy.m_scale;
+            m_position         = cpy.m_position;
+            m_positionOrigin   = cpy.m_positionOrigin;
+            m_applyMatrix      = cpy.m_applyMatrix;
+            m_defaultSize      = cpy.m_defaultSize;
+            m_defaultPos       = cpy.m_defaultPos;
+            m_defaultPosOrigin = cpy.m_defaultPosOrigin;
+
+            setApplyTransformation(cpy.m_applyTransformation);
+        }
+
+        return *this;
+    }
+
     Transformable::~Transformable()
     {
         while(m_childrenTrans.size())

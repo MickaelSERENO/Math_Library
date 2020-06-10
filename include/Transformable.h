@@ -35,6 +35,14 @@ namespace sereno
              * \param defaultConf the default size and position of this transformable */
             Transformable(const Rectangle3f& defaultConf=Rectangle3f(0, 0, 0, 0, 0, 0));
 
+            /** \brief Copy constructor. Does not add "children" as transformable (but set its parent)
+             * \param trans the parameter to copy*/
+            Transformable(const Transformable& trans);
+
+            /** \brief Assign operator. Does not add "children" as transformable (but set its parent)
+             * \param trans the parameter to copy*/
+            Transformable& operator=(const Transformable& trans);
+
             ~Transformable();
 
             /** \brief translate the transformable
