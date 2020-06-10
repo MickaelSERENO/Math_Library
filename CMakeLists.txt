@@ -57,8 +57,14 @@ set(PC ${CMAKE_BINARY_DIR}/serenoMath.pc)
 
 list(REMOVE_ITEM SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
 
+find_package(PkgConfig REQUIRED)
+PKG_CHECK_MODULES(GLM  REQUIRED glm)
+
 #Configure the executable : sources, compile options (CFLAGS) and link options (LDFLAGS)
 add_library(serenoMath SHARED ${SOURCES} ${HEADERS})
+
+target_compile_options(serenoMath PUBLIC ${GLM_CFLAGS})
+target_link_libraries(serenoMath PUBLIC ${GLM_LDFLAGS} -lm)
 
 #Add include directory
 target_include_directories(serenoMath PUBLIC
