@@ -147,7 +147,8 @@ namespace sereno
             {
                 Quaternion<T> invQ  = getInverse();
                 Quaternion<T> qPure = Quaternion<T>(vec.x, vec.y, vec.z, 0);
-                Quaternion<T> res   = invQ * qPure * (*this);
+//                Quaternion<T> res   = invQ * qPure * (*this);
+                Quaternion<T> res   = (*this) * qPure * invQ;
                 return glm::tvec3<S>(res.x, res.y, res.z);
             }
 
@@ -235,6 +236,12 @@ namespace sereno
                              q1.w*q2.y - q1.x*q2.z + q1.y*q2.w + q1.z*q2.x,  //j part
                              q1.w*q2.z + q1.x*q2.y - q1.y*q2.x + q1.z*q2.w,  //k part
                              q1.w*q2.w - q1.x*q2.x - q1.y*q2.y - q1.z*q2.z); //The real part
+    }
+
+    template <typename T, typename S>
+    glm::tvec3<S> operator*(const Quaternion<T>& q1, const glm::tvec3<S>& vec)
+    {
+        return q1.rotateVector(vec);
     }
 
     typedef Quaternion<float>  Quaternionf;
