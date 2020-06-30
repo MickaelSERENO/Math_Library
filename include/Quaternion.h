@@ -87,9 +87,9 @@ namespace sereno
             {
                 T s = sin(angle/2);
                 w   = cos(angle/2);
-                x   = axis->x * s;
-                y   = axis->y * s;
-                z   = axis->z * s;
+                x   = axis.x * s;
+                y   = axis.y * s;
+                z   = axis.z * s;
             }
 
             T& operator[](int i)
